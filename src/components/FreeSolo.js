@@ -1,9 +1,12 @@
 import * as React from 'react';
 import TextField from '@mui/material/TextField';
-import Stack from '@mui/material/Stack';
 import Autocomplete from '@mui/material/Autocomplete';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { green, orange } from '@mui/material/colors';
+import { Grid } from '@mui/material';
+import Button from '@mui/material/Button';
+import SearchIcon from '@mui/icons-material/Search';
+import { results } from '../data/datalist';
 
 const outerTheme = createTheme({
   palette: {
@@ -12,43 +15,61 @@ const outerTheme = createTheme({
     },
   },
 });
+
 export default function FreeSolo() {
+  console.log(results)
+  const [text,setText]=React.useState(null)
+  const keyDown = (event) => { //화살표 방향키 입력시 검색어 바뀌는 기능 좀 더 생각해 봐야 할 듯
+    if (event.key === 'Enter'){
+        setText(event.target.value)
+    }
+  };
+  
+  
+  const [inputValue, setInputValue] = React.useState('');
   return (
     <ThemeProvider theme={outerTheme}>
-    <Stack spacing={2} sx={{ width: 300 }}>
-      <Autocomplete
-        id="free-solo-demo"
-        freeSolo
-        options={top100Films.map((option) => option.title)}
-        renderInput={(params) => <TextField {...params} label="freeSolo" />}
-        // sx={{
-        //   ".css-md26zr-MuiInputBase-root-MuiOutlinedInput-root:hover": {
-        //    border:'1px solid #00FF40'
-        //   }
-        // }}
-      />
       
-      {/* <Autocomplete
-        freeSolo
-        id="free-solo-2-demo" 
-        disableClearable
-        options={top100Films.map((option) => option.title)}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Search input"
-            InputProps={{
-              ...params.InputProps,
-              type: 'search',
-            }}
-          />
-        )}
-      /> */}
-    </Stack>
+        <Grid container sx={{width:'500px',}}>
+          <Grid item xs={10} sx={{}}>
+            <Autocomplete
+              inputValue={inputValue}
+              onInputChange={(event, newInputValue) => {
+                setInputValue(newInputValue)
+              }}
+              onKeyDown={keyDown}
+              id="free-solo-demo"
+              freeSolo
+              options={results.map((option) => option.title)}
+              renderInput={(params) => <TextField {...params} label="검색어를 입력해 주세요" />}
+              // sx={{
+              //   ".css-md26zr-MuiInputBase-root-MuiOutlinedInput-root:hover": {
+              //    border:'1px solid #00FF40'
+              //   }
+              // }}
+              sx={{
+                height:'60px'
+              }}
+            />
+          </Grid>
+          <Grid item xs={2}>
+            <Button variant="contained" sx={{height:'55px'}} onClick={()=>setText(inputValue)}>
+              <SearchIcon fontSize='large'/>
+            </Button>
+          </Grid>
+        </Grid>
+      {/* 검색결과 */}
+      {text?
+      <div>
+        {text}
+      </div>:
+      <div>검색어가 없습니다..</div>}
     </ThemeProvider>
   );
 }
 
+
+//외부 데이터
 // Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
 const top100Films = [
   { title: 'The Shawshank Redemption', year: 1994 },
